@@ -158,11 +158,11 @@ const translations = {
 const Section = ({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) => (
   <motion.section
     id={id}
-    initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
-    whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+    initial={{ opacity: 0, y: 40 }}
+    whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-100px" }}
-    transition={{ duration: 1.2, ease: [0.21, 0.47, 0.32, 0.98] }}
-    className={`py-32 px-6 md:px-12 max-w-7xl mx-auto ${className}`}
+    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+    className={`py-32 px-6 md:px-12 max-w-7xl mx-auto will-change-transform ${className}`}
   >
     {children}
   </motion.section>
@@ -352,31 +352,30 @@ const LiveWallpaper = React.memo(() => {
 
 const ProjectCard = ({ title, description, tags, icon: Icon }: { title: string; description: string; tags: string[]; icon: any }) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
+    viewport={{ once: true, margin: "-50px" }}
     whileHover={{ 
-      y: -15, 
-      scale: 1.03,
-      rotateZ: 0.5,
-      transition: { duration: 0.4, ease: "easeOut" }
+      y: -20, 
+      scale: 1.02,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
     }}
-    className="group p-10 rounded-[3rem] border border-white/10 bg-white/[0.02] backdrop-blur-3xl hover:border-emerald-500/50 transition-all duration-700 relative overflow-hidden shadow-2xl shadow-black/50 hover:shadow-emerald-500/10"
+    className="group p-10 rounded-[3.5rem] border border-white/10 bg-white/[0.03] backdrop-blur-3xl hover:border-emerald-500/40 transition-all duration-700 relative overflow-hidden shadow-2xl shadow-black/50 hover:shadow-emerald-500/20 will-change-transform"
   >
-    <div className="absolute -top-24 -right-24 w-80 h-80 bg-emerald-500/10 rounded-full blur-[120px] group-hover:bg-emerald-500/20 transition-all duration-700" />
+    <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-[130px] group-hover:bg-emerald-500/25 transition-all duration-700" />
     <div className="relative z-10">
-      <div className="flex items-center gap-6 mb-10">
-        <div className="p-6 rounded-3xl bg-gradient-to-br from-emerald-500/30 to-teal-500/20 text-emerald-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-[0_0_25px_rgba(16,185,129,0.3)]">
-          <Icon size={36} />
+      <div className="flex items-center gap-8 mb-12">
+        <div className="p-7 rounded-[2rem] bg-gradient-to-br from-emerald-500/40 to-teal-500/20 text-emerald-400 group-hover:scale-110 group-hover:rotate-[15deg] transition-all duration-700 shadow-[0_0_35px_rgba(16,185,129,0.4)] border border-emerald-400/20">
+          <Icon size={40} />
         </div>
-        <h3 className="text-3xl md:text-4xl font-bold group-hover:text-emerald-400 transition-colors tracking-tighter leading-none text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{title}</h3>
+        <h3 className="text-3xl md:text-5xl font-black group-hover:text-emerald-400 transition-colors tracking-tighter leading-none text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{title}</h3>
       </div>
-      <p className="text-slate-400 mb-12 leading-relaxed line-clamp-3 text-lg md:text-xl font-light group-hover:text-slate-200 transition-colors duration-500">
+      <p className="text-slate-400 mb-14 leading-relaxed line-clamp-3 text-lg md:text-2xl font-light group-hover:text-slate-200 transition-colors duration-700">
         {description}
       </p>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-4">
         {tags.map(tag => (
-          <span key={tag} className="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 text-[12px] md:text-[14px] font-mono text-slate-400 uppercase tracking-[0.2em] group-hover:border-emerald-500/40 group-hover:text-emerald-300 transition-all duration-300 shadow-sm">
+          <span key={tag} className="px-6 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[13px] md:text-[15px] font-mono text-slate-400 uppercase tracking-[0.3em] group-hover:border-emerald-500/50 group-hover:text-emerald-300 transition-all duration-500 shadow-lg">
             {tag}
           </span>
         ))}
@@ -400,6 +399,8 @@ export default function App() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
+  const { scrollYProgress: scrollYProgressGlobal } = useScroll();
+
   const spotlightRef = useRef<HTMLDivElement>(null);
   
   React.useEffect(() => {
@@ -414,6 +415,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-transparent text-slate-50 selection:bg-emerald-500/30 overflow-x-hidden">
+      {/* Scroll Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-emerald-500 z-[110] origin-left shadow-[0_0_15px_rgba(16,185,129,0.8)]"
+        style={{ scaleX: scrollYProgressGlobal }}
+      />
+
       {/* Background Elements */}
       <LiveWallpaper />
       
@@ -427,31 +434,45 @@ export default function App() {
       />
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-[100] border-b border-emerald-500/20 bg-[#00020a]/80 backdrop-blur-2xl shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <nav className="fixed top-0 w-full z-[100] transition-all duration-500 border-b border-emerald-500/10 bg-[#00020a]/60 backdrop-blur-xl hover:bg-[#00020a]/80">
+        <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
           <motion.a 
             href="#"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4 group cursor-pointer"
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center gap-5 group cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           >
-            <div className="relative w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+            <div className="relative w-14 h-14 flex items-center justify-center transition-all duration-500 group-hover:rotate-[360deg]">
               <div 
-                className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600 opacity-40 blur-lg transition-transform duration-700 group-hover:rotate-180 rounded-full"
+                className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600 opacity-20 blur-xl group-hover:opacity-60 transition-opacity duration-700 rounded-full"
               />
               <div 
-                className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600 transition-transform duration-700 group-hover:rotate-180 shadow-[0_0_35px_rgba(16,185,129,0.7)] rounded-full border-2 border-emerald-400/60"
+                className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600 transition-all duration-700 shadow-[0_0_40px_rgba(16,185,129,0.4)] rounded-full border border-emerald-400/40"
               />
-              <Terminal size={20} className="relative z-10 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]" />
+              <Terminal size={24} className="relative z-10 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="font-black text-xl tracking-tighter text-white group-hover:text-emerald-400 transition-colors uppercase">MUTALOV<span className="text-emerald-500">.DEV</span></span>
-              <span className="text-[9px] font-mono text-emerald-500/50 tracking-[0.4em] uppercase mt-1">Systems Engineer</span>
+            <div className="flex flex-col">
+              <div className="flex items-baseline gap-1">
+                <span className="font-black text-2xl tracking-tighter text-white group-hover:text-emerald-400 transition-colors uppercase">
+                  MUTALOV
+                </span>
+                <span className="font-black text-2xl tracking-tighter text-emerald-500 uppercase">
+                  .DEV
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-emerald-500/60 tracking-[0.5em] uppercase mt-1 font-bold">
+                MUHAMMADAYYUB
+              </span>
             </div>
           </motion.a>
           
           {/* Desktop Nav */}
-          <div className="hidden lg:flex gap-10 text-[11px] font-mono uppercase tracking-[0.25em] text-slate-400">
+          <div className="hidden lg:flex gap-12 text-[12px] font-mono uppercase tracking-[0.3em] text-slate-400">
             {["about", "skills", "projects", "contact"].map((item, i) => (
               <motion.a
                 key={item}
@@ -459,10 +480,14 @@ export default function App() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="relative hover:text-emerald-400 transition-colors group py-2"
+                className="relative hover:text-emerald-400 transition-all duration-300 group py-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(item)?.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 {t.nav[item as keyof typeof t.nav]}
-                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-emerald-500 transition-all duration-500 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-emerald-500 transition-all duration-500 group-hover:w-full shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
               </motion.a>
             ))}
           </div>
@@ -562,24 +587,24 @@ export default function App() {
 
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
-        <motion.div style={{ y: y1, opacity, scale }} className="text-center z-10 px-6">
+        <motion.div style={{ y: y1, opacity, scale }} className="text-center z-10 px-6 will-change-transform">
           <RevealText delay={0.2}>
-            <div className="inline-block mb-6 px-5 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono tracking-[0.2em] uppercase">
+            <div className="inline-block mb-8 px-6 py-2.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-mono tracking-[0.3em] uppercase shadow-[0_0_20px_rgba(16,185,129,0.1)]">
               {t.hero.badge}
             </div>
           </RevealText>
           
-          <div className="mb-10 relative flex flex-col gap-2">
-            <div className="absolute inset-0 bg-emerald-500/10 blur-[120px] rounded-full opacity-30" />
-            <RevealText delay={0.4} className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-black tracking-tighter leading-none text-white relative z-10 drop-shadow-[0_0_60px_rgba(16,185,129,1)]">
+          <div className="mb-12 relative flex flex-col gap-4">
+            <div className="absolute inset-0 bg-emerald-500/20 blur-[150px] rounded-full opacity-20" />
+            <RevealText delay={0.4} className="text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[12rem] font-black tracking-tighter leading-[0.85] text-white relative z-10 drop-shadow-[0_0_60px_rgba(16,185,129,0.8)]">
               {t.hero.title}
             </RevealText>
-            <RevealText delay={0.6} className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-black tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500 relative z-10 drop-shadow-[0_0_80px_rgba(16,185,129,0.9)]">
+            <RevealText delay={0.6} className="text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[12rem] font-black tracking-tighter leading-[0.85] text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500 relative z-10 drop-shadow-[0_0_80px_rgba(16,185,129,0.7)]">
               {t.hero.subtitle}
             </RevealText>
           </div>
 
-          <RevealText delay={0.8} className="max-w-3xl mx-auto text-slate-400 text-xl md:text-3xl leading-relaxed mb-16 font-light tracking-wide">
+          <RevealText delay={0.8} className="max-w-4xl mx-auto text-slate-400 text-xl md:text-3xl leading-relaxed mb-20 font-light tracking-wide px-4">
             {t.hero.desc}
           </RevealText>
 
@@ -587,15 +612,30 @@ export default function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 1 }}
-            className="flex flex-col md:flex-row gap-6 justify-center"
+            className="flex flex-col sm:flex-row gap-8 justify-center items-center"
           >
-            <a href="#projects" className="group relative px-10 py-5 bg-emerald-500 text-slate-950 font-bold rounded-2xl transition-all overflow-hidden">
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              <span className="relative z-10">{t.hero.projectsBtn}</span>
-            </a>
-            <button className="px-10 py-5 bg-white/5 hover:bg-white/10 border border-white/10 font-bold rounded-2xl transition-all backdrop-blur-md text-white">
+            <motion.a 
+              href="#projects" 
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="group relative px-12 py-6 bg-emerald-500 text-slate-950 font-black rounded-2xl transition-all overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.4)] w-full sm:w-auto"
+            >
+              <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+              <span className="relative z-10 flex items-center gap-3 justify-center">
+                {t.hero.projectsBtn} <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform" />
+              </span>
+            </motion.a>
+            <motion.button 
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
+              whileTap={{ scale: 0.98 }}
+              className="px-12 py-6 bg-white/5 border border-white/10 font-black rounded-2xl transition-all backdrop-blur-md text-white w-full sm:w-auto"
+            >
               {t.hero.cvBtn}
-            </button>
+            </motion.button>
           </motion.div>
         </motion.div>
 
@@ -666,7 +706,7 @@ export default function App() {
           <AnimatedHeading className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">{t.skills.title}</AnimatedHeading>
           <p className="text-slate-400 text-xl font-light max-w-2xl mx-auto">{t.skills.subtitle}</p>
         </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {[
             { icon: Server, title: t.skills.backend, color: "from-emerald-500/20 to-emerald-500/5", accent: "bg-emerald-500", items: ["Node.js / Express / NestJS", "Python / Django / FastAPI", "Go (Golang)", "Microservices Architecture", "RESTful & GraphQL APIs"] },
             { icon: MessageSquare, title: t.skills.telegram, color: "from-teal-500/20 to-teal-500/5", accent: "bg-teal-500", items: ["Telegraf / GramJS", "Aiogram (Python)", "Webhook Integration", "Payment Gateways", "User Session Management"] },
@@ -674,22 +714,22 @@ export default function App() {
           ].map((skill, i) => (
             <motion.div
               key={skill.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.2, duration: 0.8 }}
-              whileHover={{ y: -15 }}
-              className={`p-10 rounded-[3rem] border border-white/5 bg-gradient-to-br ${skill.color} backdrop-blur-3xl hover:border-white/10 transition-all duration-500 group relative overflow-hidden`}
+              transition={{ delay: i * 0.2, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -20, scale: 1.02 }}
+              className={`p-12 rounded-[3.5rem] border border-white/5 bg-gradient-to-br ${skill.color} backdrop-blur-3xl hover:border-emerald-500/30 transition-all duration-700 group relative overflow-hidden will-change-transform shadow-2xl shadow-black/40`}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-colors" />
-              <div className={`w-16 h-16 rounded-2xl ${skill.accent}/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500`}>
-                <skill.icon className={skill.accent.replace('bg-', 'text-')} size={32} />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/10 transition-colors duration-700" />
+              <div className={`w-20 h-20 rounded-[2rem] ${skill.accent}/10 flex items-center justify-center mb-10 group-hover:scale-110 group-hover:rotate-[10deg] transition-all duration-700 shadow-xl border border-white/5`}>
+                <skill.icon className={skill.accent.replace('bg-', 'text-')} size={40} />
               </div>
-              <h3 className="text-2xl font-bold mb-6 tracking-tight">{skill.title}</h3>
-              <ul className="space-y-4">
+              <h3 className="text-3xl font-black mb-8 tracking-tighter text-white">{skill.title}</h3>
+              <ul className="space-y-5">
                 {skill.items.map(item => (
-                  <li key={item} className="flex items-center gap-3 text-slate-400 font-light text-base">
-                    <div className={`w-1.5 h-1.5 rounded-full ${skill.accent} opacity-40`} /> 
+                  <li key={item} className="flex items-center gap-4 text-slate-400 font-light text-lg group-hover:text-slate-200 transition-colors duration-500">
+                    <div className={`w-2 h-2 rounded-full ${skill.accent} opacity-40 shadow-[0_0_10px_rgba(16,185,129,0.5)]`} /> 
                     {item}
                   </li>
                 ))}
